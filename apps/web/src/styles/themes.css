@@ -1,0 +1,48 @@
+/* UMBRA 三主题变量：light / dark / geek */
+
+:root[data-theme="light"] {
+  --umbra-bg: #f5f6f8;
+  --umbra-fg: #1f2430;
+  --umbra-panel: #ffffff;
+  --umbra-border: #e4e7ed;
+  --umbra-accent: #409eff;
+  --umbra-mono: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+}
+
+:root[data-theme="dark"] {
+  --umbra-bg: #14161a;
+  --umbra-fg: #e5e7eb;
+  --umbra-panel: #1d2025;
+  --umbra-border: #2b2f36;
+  --umbra-accent: #5b9dff;
+  --umbra-mono: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+}
+
+:root[data-theme="geek"] {
+  --umbra-bg: #05070a;
+  --umbra-fg: #00ff9c;
+  --umbra-panel: #0a0f14;
+  --umbra-border: #0f3b30;
+  --umbra-accent: #00ff9c;
+  --umbra-mono: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+
+  --el-color-primary: #00ff9c;
+  --el-color-primary-light-3: #22c98b;
+  --el-color-primary-light-5: #1a8f63;
+  --el-color-primary-dark-2: #00cc7d;
+  --el-bg-color: #0a0f14;
+  --el-bg-color-page: #05070a;
+  --el-bg-color-overlay: #0d141b;
+  --el-text-color-primary: #00ff9c;
+  --el-text-color-regular: #8be9c9;
+  --el-text-color-secondary: #4a8f79;
+  --el-text-color-placeholder: #2f5f52;
+  --el-border-color: #12463a;
+  --el-border-color-light: #0f3b30;
+  --el-border-color-lighter: #0c2f27;
+  --el-fill-color-blank: #070c10;
+  --el-fill-color-light: #0a1116;
+  --el-fill-color-lighter: #080d11;
+  --el-border-radius-base: 2px;
+  --el-border-radius-small: 2px;
+}
