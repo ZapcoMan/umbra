@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UMBRA · 离线 IP 地理定位</title>
+    <meta
+      name="description"
+      content="UMBRA 是一款离线、本地化的 IP 地理定位工具，提供桌面客户端、命令行与网页端三种形态，数据访问全部由 Rust 内核完成，基于上游 ip2region。"
+    />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <header class="nav">
+      <div class="brand">◈ UMBRA</div>
+      <nav>
+        <a href="#features">特性</a>
+        <a href="#forms">形态</a>
+        <a href="#quickstart">快速上手</a>
+        <a href="#download">下载</a>
+        <a href="#about">关于</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <h1>离线 · 本地 · 极速<br />IP 地理定位</h1>
+      <p class="sub">
+        UMBRA 把 IP 地理位置数据编译为本地 <code>.xdb</code> 文件，查询全程在本机完成，
+        <b>不联网、不上传</b>。同时支持 IPv4 / IPv6，数据访问统一由 Rust 内核实现。
+      </p>
+      <div class="cta">
+        <a class="btn primary" href="#download">下载桌面版</a>
+        <a class="btn ghost" href="#quickstart">命令行 30 秒上手</a>
+      </div>
+      <pre class="termbox">
+<span class="p">$</span> umbra 8.8.8.8 2408:4003::1
+<span class="p">  8.8.8.8       │</span> United States|California|0|Google LLC|US
+<span class="p">  2408:4003::1  │</span> 中国|广东省|深圳市|阿里|CN</pre>
+    </section>
+
+    <section id="features" class="wrap">
+      <h2>核心特性</h2>
+      <div class="grid">
+        <div class="card"><h3>完全离线</h3><p>内置 ip2region v4/v6 xdb，查询不产生任何网络请求，隐私零外泄。</p></div>
+        <div class="card"><h3>Rust 内核</h3><p>数据解析、双栈路由、region 结构化全在 <code>umbra-core</code>，前端只做界面。</p></div>
+        <div class="card"><h3>三种形态</h3><p>桌面客户端、命令行工具、网页端 + HTTP API，一套内核多端复用。</p></div>
+        <div class="card"><h3>三主题界面</h3><p>极客 / 暗色 / 亮色主题，设置页一键切换并本地持久化。</p></div>
+        <div class="card"><h3>IPv4 + IPv6</h3><p>自动按地址族路由到对应库，批量查询逐项独立不中断。</p></div>
+        <div class="card"><h3>结构化输出</h3><p>region 解析为 国家 / 省份 / 城市 / ISP / ISO 五段，缺失以 0 标注。</p></div>
+      </div>
+    </section>
+
+    <section id="forms" class="wrap">
+      <h2>三种形态</h2>
+      <div class="forms">
+        <div class="form">
+          <h3>◐ 桌面客户端</h3>
+          <p>Tauri 2 + Vue3 + Element Plus，Windows 安装包（MSI / NSIS）。经 IPC 调用 Rust 内核，本地离线查询。</p>
+        </div>
+        <div class="form">
+          <h3>&gt;_ 命令行</h3>
+          <p><code>umbra</code>：单 IP、管道批量、NDJSON 输出、<code>--db-dir</code> 指定数据。适合脚本与集成。</p>
+        </div>
+        <div class="form">
+          <h3>🌐 网页端 + API</h3>
+          <p><code>umbra-server</code> 提供 HTTP 查询 API（三层 controller/service/mapper），网页端经其取数。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="quickstart" class="wrap">
+      <h2>快速上手</h2>
+      <pre class="code">
+# 命令行：查询单个或批量 IP
+umbra 8.8.8.8 114.114.114.114
+cat ips.txt | umbra --json
+
+# HTTP API（由 Rust 内核离线解析）
+curl "http://127.0.0.1:8080/api/lookup?ip=8.8.8.8"
+# {"ok":true,"ip":"8.8.8.8","region":{...}}</pre>
+    </section>
+
+    <section id="download" class="wrap">
+      <h2>下载</h2>
+      <p class="sub">提供 Windows 桌面安装包与源码构建说明。桌面端为 Tauri 原生壳，体积小、内存占用低。</p>
+      <div class="cta">
+        <a class="btn primary" href="#">UMBRA Setup (NSIS .exe)</a>
+        <a class="btn ghost" href="#">UMBRA (MSI)</a>
+      </div>
+      <p class="muted">源码构建：<code>cargo build --release</code> / <code>pnpm tauri build</code>。</p>
+    </section>
+
+    <section id="about" class="wrap about">
+      <h2>关于与致谢</h2>
+      <p>
+        UMBRA <b>基于开源项目 ip2region 构建</b>——数据格式、xdb 解析与查询能力均来自上游
+        <code>ip2region</code>（本项目 vendor 其 Rust 绑定）。致谢原作者
+        <a href="https://github.com/lionsoul2014/ip2region">lionsoul2014</a>。
+      </p>
+      <p>
+        上游 ip2region 采用 <b>Apache License 2.0 与 MIT License 双许可</b>；UMBRA 沿用以兼容上游。
+      </p>
+    </section>
+
+    <section class="wrap notice">
+      <h3>使用须知</h3>
+      <ul>
+        <li>IP 地理数据由第三方渠道汇总，精度与时效有限，不作为高置信场景唯一依据。</li>
+        <li>请在符合所在地法律法规的前提下使用，不得用于侵犯他人隐私或其他违法违规用途。</li>
+        <li>UMBRA 所有查询均在本机离线完成，不会向任何外部服务发送你查询的 IP。</li>
+      </ul>
+    </section>
+
+    <footer class="foot">
+      <span>◈ UMBRA · 离线 IP 地理定位</span>
+      <span>基于 ip2region (Apache-2.0 / MIT) · Rust 内核</span>
+    </footer>
+  </body>
+</html>
