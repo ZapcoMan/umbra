@@ -5,8 +5,9 @@ members = [
     "crates/umbra-cli",
     "crates/umbra-server",
 ]
-# vendor/rust 是复制自上游 ip2region 的独立 crate，作为 path 依赖引用，不纳入本 workspace 成员
-exclude = ["vendor/rust"]
+# vendor/ 下是从上游 ip2region 复制的独立 crate（ip2region 与其依赖 maker），
+# 作为 path 依赖引用，不纳入本 workspace 成员
+exclude = ["vendor"]
 
 [workspace.package]
 version = "0.1.0"

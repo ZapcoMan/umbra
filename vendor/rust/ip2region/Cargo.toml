@@ -6,17 +6,9 @@ rust-version = "1.89.0"
 description = "The rust binding for ip2region"
 license = "Apache-2.0"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
+# 适配 UMBRA vendoring：上游 path 依赖 ../../../maker/rust/maker 指向仓库外目录，
+# 此处改指同级 vendor/maker；并移除 bench 与 dev 依赖以精简构建依赖图（不影响查询功能）。
 [dependencies]
 tracing = "0.1"
 thiserror = "2"
-maker = { path = "../../../maker/rust/maker"}
-
-[dev-dependencies]
-criterion = "0.7"
-rand = "0.9"
-
-[[bench]]
-name = "search"
-harness = false
+maker = { path = "../../maker" }
