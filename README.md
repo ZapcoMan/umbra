@@ -1,5 +1,9 @@
 # UMBRA
 
+![Version](https://img.shields.io/badge/version-v0.1.0-00ff9c?style=flat-square)
+![Release](https://img.shields.io/github/v/release/ZapcoMan/umbra?style=flat-square&label=release&color=ff2d95)
+![License](https://img.shields.io/badge/license-Apache--2.0%20OR%20MIT-blueviolet?style=flat-square)
+
 UMBRA 是一款**离线、本地化**的 IP 地理定位套件：把 IP 地理位置数据编译进本地 `.xdb` 二进制文件，查询全程在本机完成，**不联网、不上传**。它提供三种形态——Windows 桌面客户端、命令行工具、网页端 + HTTP API，且数据访问统一由 **Rust 内核**实现。
 
 > UMBRA **基于开源项目 [ip2region](https://github.com/lionsoul2014/ip2region) 构建**：数据格式、xdb 解析与查询能力均来自上游 ip2region（本项目 vendor 其 Rust 绑定）。详见[关于上游](#关于上游)。
@@ -21,6 +25,19 @@ UMBRA 是一款**离线、本地化**的 IP 地理定位套件：把 IP 地理�
 | Web 后端 | `crates/umbra-server` | axum HTTP API，类 Spring Boot 三层 controller/service/mapper |
 | 网页端 | `apps/web` | Vue3 + Vite + Element Plus + TS，经 HTTP 调后端，同样三主题 |
 | 官网 | `site` | 零构建静态站，暗黑极客视觉 |
+
+## 下载
+
+CI 在 `v*` tag 上构建并发布到 [GitHub Release](https://github.com/ZapcoMan/umbra/releases)：
+
+| 产物 | 内容 |
+| --- | --- |
+| `umbra-<tag>-<target>.tar.gz` / `.zip` | `umbra` + `umbra-server` + 内嵌 `data/*.xdb`，解压即用。target 覆盖 Linux x86_64、macOS aarch64/x86_64、Windows x64 |
+| `UMBRA_<version>_x64-setup.exe` / `.msi` | Windows 桌面客户端安装包 |
+| `UMBRA_<version>_aarch64.dmg` | macOS 桌面客户端 |
+| `umbra_<version>_amd64.deb` | Linux 桌面客户端 |
+
+官网：<https://zapcoman.github.io/umbra/>（由 `site/` 经 GitHub Pages 部署）
 
 ## 快速开始
 
@@ -80,6 +97,16 @@ United States|New York|0|0|US
 
 数据头版本为 v3。`umbra-core` 默认以 VectorIndex 缓存加载这两份文件。
 
+## 离线库定位顺序
+
+内核按以下优先级查找 `data/ip2region_v{4,6}.xdb`，命中即停：
+
+1. 环境变量 `UMBRA_DB_DIR` 指定的目录；
+2. 可执行文件同级的 `data/`——Release 归档与桌面安装包即此布局，故解压/安装即用；
+3. 编译期源码树 `data/`，仅 `cargo run` / `tauri dev` 开发态有效。
+
+CLI 可用 `--db-dir` 显式覆盖；桌面客户端在此之前还会先尝试 Tauri 资源目录。三级都未命中时，错误信息会列出已尝试的目录。
+
 ## 项目结构
 
 ```text
@@ -109,7 +136,7 @@ Rust 依赖通过 `.cargo/config.toml` 走 rsproxy 镜像；npm 依赖走 npmmir
 
 ## 测试与验证状态
 
-- ✅ `umbra-core`：8 项单元测试（真实 xdb 查询、双栈路由、非法 IP、region 解析、序列化）全通过。
+- ✅ `umbra-core`：12 项单元测试（真实 xdb 查询、双栈路由、非法 IP、region 解析、序列化、离线库定位优先级链）全通过。
 - ✅ `umbra-cli` / `umbra-server`：真实 IP 查询、错误码、批量逐项均实测。
 - ✅ 桌面 / 网页端：`vue-tsc` + `vite build` 通过；桌面已产出 Windows 安装包；官网浏览器实测渲染正常。
 - ⏳ 桌面与网页端的 GUI 运行时交互（主题切换、IPC/HTTP 端到端）需人工打开安装包 / 浏览器最终确认。
@@ -126,4 +153,4 @@ UMBRA 的数据与查询能力来自 **ip2region**（作者 lionsoul2014 / chenx
 
 ## 开源协议
 
-UMBRA 采用 **Apache License 2.0 与 MIT License 双许可**（与上游 ip2region 一致），你可以任选其一使用、分发和修改。协议全文见 [LICENSE.md](file:///C:/Users/Administrator/Desktop/umbra/LICENSE.md)。
+UMBRA 采用 **Apache License 2.0 与 MIT License 双许可**（与上游 ip2region 一致），你可以任选其一使用、分发和修改。协议全文见 [LICENSE.md](LICENSE.md)。
