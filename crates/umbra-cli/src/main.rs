@@ -102,13 +102,11 @@ fn main() {
         std::process::exit(2);
     }
 
-    // 打开引擎
+    // 打开引擎：显式 --db-dir 优先，否则走内核优先级链
+    // （UMBRA_DB_DIR → 可执行文件同级 data/ → 源码树 data/）
     let umbra = match &cli.db_dir {
-        Some(d) => Umbra::open(
-            &format!("{d}/ip2region_v4.xdb"),
-            &format!("{d}/ip2region_v6.xdb"),
-        ),
-        None => Umbra::open_default(),
+        Some(d) => Umbra::open_dir(d),
+        None => Umbra::open_auto(),
     };
     let umbra = match umbra {
         Ok(u) => u,
@@ -144,7 +142,10 @@ fn main() {
                     let v = json!({ "ip": ip, "ok": false, "error": msg });
                     println!("{}", serde_json::to_string(&v).unwrap());
                 } else {
-                    println!("  {CYAN}{:<44}{RESET} {DIM}│{RESET} {RED}✗ {msg}{RESET}", ip);
+                    println!(
+                        "  {CYAN}{:<44}{RESET} {DIM}│{RESET} {RED}✗ {msg}{RESET}",
+                        ip
+                    );
                 }
             }
         }

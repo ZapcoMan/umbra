@@ -18,8 +18,7 @@ async fn main() {
     let service = Arc::new(IpGeoService::new(mapper));
     let app = build_router(service);
 
-    let addr =
-        std::env::var("UMBRA_ADDR").unwrap_or_else(|_| "127.0.0.1:8080".to_string());
+    let addr = std::env::var("UMBRA_ADDR").unwrap_or_else(|_| "127.0.0.1:8080".to_string());
     let listener = match tokio::net::TcpListener::bind(&addr).await {
         Ok(l) => l,
         Err(e) => {

@@ -36,15 +36,14 @@ impl IpGeoMapper {
         })
     }
 
-    /// 若设置环境变量 `UMBRA_DB_DIR` 则从该目录加载 v4/v6，否则回退内置 data。
+    /// 按内核优先级链定位数据目录：`UMBRA_DB_DIR` → 可执行文件同级 `data/` → 源码树 `data/`。
+    /// 前两级供分发场景（解压即用），最后一级供开发/测试。
     pub fn open_from_env() -> Result<Self, AppError> {
-        match std::env::var("UMBRA_DB_DIR") {
-            Ok(dir) => Self::open(
-                format!("{dir}/ip2region_v4.xdb"),
-                format!("{dir}/ip2region_v6.xdb"),
-            ),
-            Err(_) => Self::open_default(),
-        }
+        let umbra =
+            Umbra::open_auto().map_err(|e| AppError::internal(format!("打开离线库失败: {e}")))?;
+        Ok(Self {
+            umbra: Arc::new(umbra),
+        })
     }
 
     /// 查询单个 IP，返回结构化 region。
