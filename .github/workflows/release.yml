@@ -1,0 +1,174 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  cli:
+    name: CLI/Server ${{ matrix.target }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+          - os: macos-14
+            target: aarch64-apple-darwin
+          # GitHub 已退役 Intel macOS runner，故在 Apple Silicon 上交叉出 x86_64 darwin
+          - os: macos-14
+            target: x86_64-apple-darwin
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # 仓库内 .cargo/config.toml 指向国内 rsproxy 镜像；海外 runner 直连 crates.io 更快也更稳
+      - name: 移除国内镜像配置
+        shell: bash
+        run: rm -f .cargo/config.toml
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: 构建 release 二进制
+        run: cargo build --release --target ${{ matrix.target }} -p umbra-cli -p umbra-server
+
+      # 归档内二进制与 data/ 同级，命中内核优先级链的"可执行文件同级 data/"，解压即用
+      - name: 打包（unix）
+        if: matrix.os != 'windows-latest'
+        run: |
+          stage="umbra-${GITHUB_REF_NAME}-${{ matrix.target }}"
+          mkdir -p "$stage/data" upload
+          cp "target/${{ matrix.target }}/release/umbra" "$stage/"
+          cp "target/${{ matrix.target }}/release/umbra-server" "$stage/"
+          cp data/ip2region_v4.xdb data/ip2region_v6.xdb "$stage/data/"
+          cp LICENSE.md README.md "$stage/"
+          tar -czf "upload/$stage.tar.gz" "$stage"
+          ls -l upload
+
+      - name: 打包（windows）
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          $stage = "umbra-$env:GITHUB_REF_NAME-${{ matrix.target }}"
+          New-Item -ItemType Directory -Force "$stage/data", upload | Out-Null
+          Copy-Item "target/${{ matrix.target }}/release/umbra.exe" $stage
+          Copy-Item "target/${{ matrix.target }}/release/umbra-server.exe" $stage
+          Copy-Item data/ip2region_v4.xdb, data/ip2region_v6.xdb "$stage/data"
+          Copy-Item LICENSE.md, README.md $stage
+          Compress-Archive -Path $stage -DestinationPath "upload/$stage.zip"
+          Get-ChildItem upload
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cli-${{ matrix.target }}
+          path: upload/*
+
+  desktop:
+    name: Desktop ${{ matrix.platform }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            platform: windows
+            bundles: nsis,msi
+          - os: macos-14
+            platform: macos
+            bundles: app,dmg
+          - os: ubuntu-22.04
+            platform: linux
+            bundles: deb
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 移除国内镜像配置
+        shell: bash
+        run: rm -f .cargo/config.toml
+
+      - name: 安装 Linux 系统依赖
+        if: matrix.platform == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file \
+            libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12.9.1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: apps/desktop/pnpm-lock.yaml
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: 安装前端依赖
+        working-directory: apps/desktop
+        run: pnpm install --frozen-lockfile
+
+      - uses: tauri-apps/tauri-action@v0
+        with:
+          projectPath: apps/desktop
+          args: --bundles ${{ matrix.bundles }}
+
+      # 三平台共用同一份 tauri.conf.json，用 deb 作代表性证据核验 xdb 确实随包
+      - name: 核验离线库已随包
+        if: matrix.platform == 'linux'
+        run: |
+          deb=$(ls apps/desktop/src-tauri/target/release/bundle/deb/*.deb | head -1)
+          dpkg-deb -c "$deb" | grep -E 'ip2region_v[46]\.xdb' || { echo "deb 内未找到 xdb"; exit 1; }
+          echo "deb 内含离线库: $deb"
+
+      - name: 收集安装包
+        shell: bash
+        run: |
+          mkdir -p upload
+          find apps/desktop/src-tauri/target/release/bundle -type f \
+            \( -name '*.exe' -o -name '*.msi' -o -name '*.dmg' -o -name '*.deb' -o -name '*.app.tar.gz' \) \
+            -exec cp {} upload/ \;
+          ls -l upload
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop-${{ matrix.platform }}
+          path: upload/*
+
+  release:
+    name: 汇总 Release
+    needs: [cli, desktop]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: 提取发布说明
+        id: body
+        # runner 上附注 tag 正文常读不到，故取自 CHANGELOG 顶部段落；用字面 ^##（mawk 不支持 POSIX 字符类）
+        run: |
+          BODY="$(awk '/^## / { n++; if (n==2) exit } n==1 { print }' CHANGELOG.md)"
+          [ -z "$BODY" ] && BODY="${GITHUB_REF_NAME}"
+          {
+            echo "text<<RELEASE_BODY_EOF"
+            echo "$BODY"
+            echo "RELEASE_BODY_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          body: ${{ steps.body.outputs.text }}
+          files: artifacts/*
