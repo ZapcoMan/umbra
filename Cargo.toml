@@ -15,7 +15,7 @@ edition = "2021"
 rust-version = "1.89"
 license = "Apache-2.0 OR MIT"
 authors = ["UMBRA"]
-repository = "https://github.com/lionsoul2014/ip2region"
+repository = "https://github.com/ZapcoMan/umbra"
 
 [workspace.dependencies]
 ip2region = { path = "vendor/rust/ip2region" }
