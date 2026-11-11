@@ -1,0 +1,15 @@
+# 统一源码为 LF，避免 Windows 下 CRLF 噪声
+* text=auto eol=lf
+
+# 二进制数据：xdb 离线库不可做行尾转换
+*.xdb binary
+*.exe binary
+*.dll binary
+*.png binary
+*.ico binary
+
+# 文本类显式声明
+*.rs text
+*.toml text
+*.md text
+Cargo.lock text eol=lf
