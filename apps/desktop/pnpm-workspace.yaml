@@ -1,0 +1,8 @@
+packages:
+  - "."
+
+# esbuild 与 vue-demi 的原生二进制走 optionalDependencies，无需运行其安装脚本；
+# 显式声明为 false，避免 pnpm 11+ 的 strictDepBuilds 把"未审查"判成非零退出。
+allowBuilds:
+  esbuild: false
+  vue-demi: false
