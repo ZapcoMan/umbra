@@ -8,6 +8,7 @@
 
 use std::fmt;
 use std::net::IpAddr;
+use std::path::{Component, Path, PathBuf};
 use std::sync::Arc;
 
 use ip2region::{CachePolicy, Searcher};
@@ -17,6 +18,11 @@ use serde::Serialize;
 const REGION_FIELDS: usize = 5;
 /// 缺失字段的占位值
 const NULL_FIELD: &str = "0";
+/// 离线库文件名（上游 ip2region 约定）
+const V4_FILE: &str = "ip2region_v4.xdb";
+const V6_FILE: &str = "ip2region_v6.xdb";
+/// 数据目录名
+const DATA_DIR: &str = "data";
 
 /// 解析后的结构化地理信息。除国家外，缺失字段以 `None` 表示（源数据用 `0` 占位）。
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
@@ -137,15 +143,74 @@ impl Umbra {
         Ok(raw)
     }
 
-    /// 便捷构造：默认使用与源码树同包内置的 `data/ip2region_v{4,6}.xdb`
-    /// （路径在编译期由 CARGO_MANIFEST_DIR 固定，供开发/测试；生产请用 [`Umbra::open`] 指定实际路径）。
+    /// 便捷构造：使用与源码树同包内置的 `data/ip2region_v{4,6}.xdb`
+    /// （路径在编译期由 CARGO_MANIFEST_DIR 固定，仅供开发/测试；分发场景请用 [`Umbra::open_auto`]）。
     pub fn open_default() -> Result<Umbra, UmbraError> {
-        let base = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../data");
-        Umbra::open(
-            base.join("ip2region_v4.xdb").to_str().unwrap(),
-            base.join("ip2region_v6.xdb").to_str().unwrap(),
-        )
+        Umbra::open_dir(source_tree_data_dir())
     }
+
+    /// 从指定目录加载 `ip2region_v{4,6}.xdb`。
+    pub fn open_dir(dir: impl AsRef<Path>) -> Result<Umbra, UmbraError> {
+        let base = dir.as_ref();
+        let v4 = base.join(V4_FILE);
+        let v6 = base.join(V6_FILE);
+        Umbra::open(&v4.to_string_lossy(), &v6.to_string_lossy())
+    }
+
+    /// 按优先级链定位数据目录后加载：`UMBRA_DB_DIR` → 可执行文件同级 `data/` → 源码树 `data/`。
+    /// 前两级供分发场景（解压即用），最后一级供开发/测试。
+    pub fn open_auto() -> Result<Umbra, UmbraError> {
+        let exe_dir = std::env::current_exe()
+            .ok()
+            .and_then(|exe| exe.parent().map(|dir| dir.to_path_buf()));
+        let candidates = data_dir_candidates(
+            std::env::var("UMBRA_DB_DIR").ok().as_deref(),
+            exe_dir.as_deref(),
+        );
+
+        let mut tried = Vec::new();
+        for dir in &candidates {
+            if dir.join(V4_FILE).is_file() && dir.join(V6_FILE).is_file() {
+                return Umbra::open_dir(dir);
+            }
+            tried.push(dir.display().to_string());
+        }
+        Err(UmbraError::Search(format!(
+            "未找到离线库 {V4_FILE} 与 {V6_FILE}；已尝试: {}；可用 UMBRA_DB_DIR 指定数据目录",
+            tried.join(" | ")
+        )))
+    }
+}
+
+/// 编译期源码树内的数据目录（仅开发/测试有效）。
+fn source_tree_data_dir() -> PathBuf {
+    let raw = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../")
+        .join(DATA_DIR);
+    // 消去 `..` 分量：该路径会出现在报错信息里，不宜长成 crates/umbra-core/../../data
+    let mut normalized = PathBuf::new();
+    for component in raw.components() {
+        match component {
+            Component::ParentDir => {
+                normalized.pop();
+            }
+            other => normalized.push(other.as_os_str()),
+        }
+    }
+    normalized
+}
+
+/// 数据目录候选，按优先级排列；空的 `UMBRA_DB_DIR` 视为未设置。
+fn data_dir_candidates(env_dir: Option<&str>, exe_dir: Option<&Path>) -> Vec<PathBuf> {
+    let mut dirs = Vec::new();
+    if let Some(dir) = env_dir.map(str::trim).filter(|dir| !dir.is_empty()) {
+        dirs.push(PathBuf::from(dir));
+    }
+    if let Some(dir) = exe_dir {
+        dirs.push(dir.join(DATA_DIR));
+    }
+    dirs.push(source_tree_data_dir());
+    dirs
 }
 
 #[cfg(test)]
@@ -227,7 +292,42 @@ mod tests {
     #[test]
     fn lookup_ipv6_routes_to_v6_lib() {
         let u = umbra();
-        let r = u.lookup("2408:4003::1").expect("v6 查询应成功且路由到 v6 库");
+        let r = u
+            .lookup("2408:4003::1")
+            .expect("v6 查询应成功且路由到 v6 库");
         assert!(!r.country.is_empty());
+    }
+
+    // ---- 数据目录定位：优先级链以纯函数断言，不碰环境变量 ----
+
+    #[test]
+    fn candidates_follow_priority_order() {
+        let dirs = data_dir_candidates(Some("/opt/umbra-data"), Some(Path::new("/usr/bin")));
+        assert_eq!(dirs.len(), 3);
+        assert_eq!(dirs[0], PathBuf::from("/opt/umbra-data"));
+        assert_eq!(dirs[1], Path::new("/usr/bin").join(DATA_DIR));
+        assert!(dirs[2].ends_with(DATA_DIR), "源码树应作为最后兜底");
+    }
+
+    #[test]
+    fn blank_env_dir_is_treated_as_unset() {
+        let dirs = data_dir_candidates(Some("   "), Some(Path::new("/usr/bin")));
+        assert_eq!(dirs.len(), 2);
+        assert_eq!(dirs[0], Path::new("/usr/bin").join(DATA_DIR));
+    }
+
+    #[test]
+    fn open_dir_reports_missing_files() {
+        match Umbra::open_dir("./no-such-data-dir") {
+            Err(UmbraError::Search(_)) => {}
+            Err(other) => panic!("缺文件应报查询层错误，实际: {other}"),
+            Ok(_) => panic!("不存在的目录不应打开成功"),
+        }
+    }
+
+    #[test]
+    fn open_auto_falls_back_to_source_tree() {
+        let u = Umbra::open_auto().expect("仓库内应由源码树兜底命中 data/");
+        assert_eq!(u.lookup("8.8.8.8").unwrap().iso.as_deref(), Some("US"));
     }
 }

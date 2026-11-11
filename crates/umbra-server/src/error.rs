@@ -52,9 +52,10 @@ impl IntoResponse for AppError {
         let (code, msg) = match &self {
             AppError::InvalidIp(ip) => (StatusCode::BAD_REQUEST, format!("非法 IP 地址: {ip}")),
             AppError::NotFound(s) => (StatusCode::UNPROCESSABLE_ENTITY, format!("未找到: {s}")),
-            AppError::Internal(s) => {
-                (StatusCode::INTERNAL_SERVER_ERROR, format!("服务内部错误: {s}"))
-            }
+            AppError::Internal(s) => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("服务内部错误: {s}"),
+            ),
         };
         // 内部错误细节不外泄给公网，仅记录
         if matches!(self, AppError::Internal(_)) {
