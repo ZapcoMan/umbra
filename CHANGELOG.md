@@ -15,8 +15,13 @@
 - **apps/web（网页端）**：Vue3 + Vite + Element Plus + TS，三主题，经 HTTP 调用后端，含后端连通测试与本地历史。
 - **site（官网）**：零构建静态站，暗黑极客视觉，呈现三形态/快速上手/使用须知与上游致谢。
 - **数据与合规**：随附从上游复制的 `data/ip2region_v4.xdb`、`ip2region_v6.xdb`；保留上游 Apache-2.0/MIT 许可全文；UMBRA 采用相同双许可。
+- **离线库定位优先级链**：`UMBRA_DB_DIR` → 可执行文件同级 `data/` → 源码树 `data/`（开发态），使分发产物解压即用；桌面端在此之前先尝试 Tauri 资源目录，xdb 经 `bundle.resources` 随包分发。
+- **发布与 CI**：`v*` tag 触发的 Release 工作流——四平台（Linux x86_64-gnu、macOS aarch64、macOS x86_64、Windows x64-msvc）构建 `umbra` 与 `umbra-server` 并连同 `data/` 归档；三平台（Windows NSIS+MSI、macOS dmg、Linux deb）构建桌面安装包；`site/` 经 GitHub Pages 部署至 <https://zapcoman.github.io/umbra/>。
 
 ### 说明
 
 - 数据访问全部在 Rust 内核完成，前端不解析任何 `.xdb`。
+- 根 `Cargo.toml` 的 `repository` 由上游地址修正为本仓库地址；上游致敬保留在文档与 `vendor/UPSTREAM-LICENSE-ip2region.md`。
+- 前端新增 `pnpm-workspace.yaml` 显式声明 `allowBuilds`（esbuild / vue-demi 不运行安装脚本），使 `pnpm install --frozen-lockfile` 在 CI 上以 0 退出（pnpm 11+ 的 `strictDepBuilds` 默认会把未审查的构建脚本判为失败）。
+- `umbra-core` 单元测试由 8 项增至 12 项，新增离线库定位优先级链与缺数据文件报错用例。
 - 桌面与网页端 GUI 运行时交互需人工最终确认。
