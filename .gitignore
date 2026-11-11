@@ -1,0 +1,29 @@
+# Rust 构建产物
+/target/
+**/target/
+
+# 前端
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# 打包产物
+*.exe
+*.msi
+*.nsis
+src-tauri/target/
+src-tauri/gen/
+
+# 环境变量与本地缓存
+.env
+.env.*
+!.env.example
+
+# 编辑器 / 系统
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# 说明：data/*.xdb 是项目随附的离线库数据，需要纳入版本控制，故不忽略

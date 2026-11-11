@@ -1,0 +1,10 @@
+[package]
+name = "umbra-server"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "UMBRA Web 后端：对外提供离线 IP 地理查询 HTTP API"
+
+[dependencies]
+umbra-core = { workspace = true }

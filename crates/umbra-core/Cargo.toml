@@ -1,0 +1,10 @@
+[package]
+name = "umbra-core"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "UMBRA 离线 IP 地理查询内核：加载 ip2region xdb 数据，按 IP 族自动路由查询"
+
+[dependencies]
+ip2region = { workspace = true }

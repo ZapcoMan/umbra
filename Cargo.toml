@@ -1,0 +1,21 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/umbra-core",
+    "crates/umbra-cli",
+    "crates/umbra-server",
+]
+# vendor/rust 是复制自上游 ip2region 的独立 crate，作为 path 依赖引用，不纳入本 workspace 成员
+exclude = ["vendor/rust"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.89"
+license = "Apache-2.0 OR MIT"
+authors = ["UMBRA"]
+repository = "https://github.com/lionsoul2014/ip2region"
+
+[workspace.dependencies]
+ip2region = { path = "vendor/rust/ip2region" }
+umbra-core = { path = "crates/umbra-core" }
