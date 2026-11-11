@@ -11,6 +11,7 @@ use std::net::IpAddr;
 use std::sync::Arc;
 
 use ip2region::{CachePolicy, Searcher};
+use serde::Serialize;
 
 /// region 字符串固定段数：国家|省份|城市|ISP|ISO-3166 alpha2
 const REGION_FIELDS: usize = 5;
@@ -18,7 +19,7 @@ const REGION_FIELDS: usize = 5;
 const NULL_FIELD: &str = "0";
 
 /// 解析后的结构化地理信息。除国家外，缺失字段以 `None` 表示（源数据用 `0` 占位）。
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct Region {
     pub country: String,
     pub province: Option<String>,
@@ -136,10 +137,10 @@ impl Umbra {
         Ok(raw)
     }
 
-    /// 便捷构造：默认使用与二进制同包内置的 `data/ip2region_v{4,6}.xdb`（相对 crate 根定位，供示例/测试）。
+    /// 便捷构造：默认使用与源码树同包内置的 `data/ip2region_v{4,6}.xdb`
+    /// （路径在编译期由 CARGO_MANIFEST_DIR 固定，供开发/测试；生产请用 [`Umbra::open`] 指定实际路径）。
     pub fn open_default() -> Result<Umbra, UmbraError> {
-        let base = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("../../data");
+        let base = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../data");
         Umbra::open(
             base.join("ip2region_v4.xdb").to_str().unwrap(),
             base.join("ip2region_v6.xdb").to_str().unwrap(),
@@ -189,6 +190,14 @@ mod tests {
         assert_eq!(r.as_raw(), raw);
     }
 
+    #[test]
+    fn region_serializes_to_json() {
+        let r = Region::parse("中国|浙江省|杭州市|阿里云|CN").unwrap();
+        let j = serde_json::to_string(&r).unwrap();
+        assert!(j.contains("\"country\":\"中国\""));
+        assert!(j.contains("\"city\":\"杭州市\""));
+    }
+
     // ---- 真实 xdb 集成：验证路由与非法输入 ----
 
     fn umbra() -> Umbra {
@@ -212,14 +221,12 @@ mod tests {
     fn lookup_ipv4_public_dns() {
         let u = umbra();
         let r = u.lookup("8.8.8.8").expect("v4 查询应成功");
-        // 8.8.8.8 属 Google 公共 DNS，国家应为美国
         assert_eq!(r.iso.as_deref(), Some("US"));
     }
 
     #[test]
     fn lookup_ipv6_routes_to_v6_lib() {
         let u = umbra();
-        // 用一个已知 IPv6 触发 v6 库；若误路由到 v4 会返回 Err
         let r = u.lookup("2408:4003::1").expect("v6 查询应成功且路由到 v6 库");
         assert!(!r.country.is_empty());
     }

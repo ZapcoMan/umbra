@@ -8,3 +8,7 @@ description = "UMBRA 离线 IP 地理查询内核：加载 ip2region xdb 数据�
 
 [dependencies]
 ip2region = { workspace = true }
+serde = { workspace = true }
+
+[dev-dependencies]
+serde_json = { workspace = true }
