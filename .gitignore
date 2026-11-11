@@ -27,3 +27,4 @@ src-tauri/gen/
 *.swp
 
 # 说明：data/*.xdb 是项目随附的离线库数据，需要纳入版本控制，故不忽略
+AGENT.md
