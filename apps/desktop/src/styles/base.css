@@ -1,0 +1,55 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--umbra-bg);
+  color: var(--umbra-fg);
+  font-family: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* geek 主题：全局等宽 + 扫描线氛围 */
+:root[data-theme="geek"] body {
+  font-family: var(--umbra-mono);
+  letter-spacing: 0.2px;
+}
+:root[data-theme="geek"] body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 255, 156, 0.03) 0px,
+    rgba(0, 255, 156, 0.03) 1px,
+    transparent 2px,
+    transparent 4px
+  );
+  z-index: 9999;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--umbra-border);
+  border-radius: 4px;
+}
+
+.umbra-brand {
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+:root[data-theme="geek"] .umbra-brand {
+  color: var(--umbra-accent);
+  text-shadow: 0 0 8px rgba(0, 255, 156, 0.6);
+}

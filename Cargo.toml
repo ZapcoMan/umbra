@@ -6,8 +6,8 @@ members = [
     "crates/umbra-server",
 ]
 # vendor/ 下是从上游 ip2region 复制的独立 crate（ip2region 与其依赖 maker），
-# 作为 path 依赖引用，不纳入本 workspace 成员
-exclude = ["vendor"]
+# apps/ 下是 Tauri 桌面工程，二者均不纳入本 workspace 成员
+exclude = ["vendor", "apps"]
 
 [workspace.package]
 version = "0.1.0"
