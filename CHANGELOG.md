@@ -2,6 +2,12 @@
 
 本项目遵循[保留式更新日志](https://keepachangelog.com/zh-CN/1.0.0/)规范，版本号遵循[语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [未发布]
+
+### 改动
+
+- **许可文件**：`LICENSE.md` 重命名为 `LICENSE`，恢复上游 ip2region 许可原文（Apache-2.0 全文 + MIT 部分版权署上游作者 Lionsoul）；README、AGENT.md 与 Release 工作流中的文件名引用同步更新。
+
 ## [0.1.1] - 2026-11-12
 
 发布产物平台收敛：Release 工作流不再构建 macOS 产物。`v0.1.1` 是首个实际产出 GitHub Release 的版本。
