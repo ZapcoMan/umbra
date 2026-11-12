@@ -35,15 +35,15 @@ UMBRA 是一款**离线、本地化**的 IP 地理定位套件：把 IP 地理�
 
 ### 🛠️ 技术栈
 
-| 分类 | 技术 |
-|------|------|
-| **内核** | Rust 1.95, ip2region 0.2.1（vendored）, maker 0.2.0（vendored）, serde |
-| **命令行** | clap 4.6（derive） |
-| **Web 后端** | axum 0.8, tokio 1, tower-http 0.6（CORS）, tracing |
-| **前端** | Vue 3.5, Vite 6, Element Plus 2.14, Pinia 2, TypeScript 5.6 |
-| **桌面** | Tauri 2（IPC 直连 Rust 内核） |
-| **官网** | 零构建静态 HTML/CSS |
-| **工具** | cargo（rsproxy 镜像）, pnpm 12（npmmirror）, GitHub Actions |
+| 分类         | 技术                                                                   |
+|--------------|------------------------------------------------------------------------|
+| **内核**     | Rust 1.95, ip2region 0.2.1（vendored）, maker 0.2.0（vendored）, serde |
+| **命令行**   | clap 4.6（derive）                                                     |
+| **Web 后端** | axum 0.8, tokio 1, tower-http 0.6（CORS）, tracing                     |
+| **前端**     | Vue 3.5, Vite 6, Element Plus 2.14, Pinia 2, TypeScript 5.6            |
+| **桌面**     | Tauri 2（IPC 直连 Rust 内核）                                          |
+| **官网**     | 零构建静态 HTML/CSS                                                    |
+| **工具**     | cargo（rsproxy 镜像）, pnpm 12（npmmirror）, GitHub Actions            |
 
 ---
 
