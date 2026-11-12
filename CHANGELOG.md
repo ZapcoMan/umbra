@@ -8,7 +8,7 @@
 
 ### 新增
 
-- **umbra-core（Rust 内核）**：加载 ip2region v4/v6 xdb，按 IP 族自动路由，region 五段结构化解析（含 `0` 占位），统一错误类型；8 项单元测试通过。
+- **umbra-core（Rust 内核）**：加载 ip2region v4/v6 xdb，按 IP 族自动路由，region 五段结构化解析（含 `0` 占位），统一错误类型；12 项单元测试通过。
 - **umbra-cli（命令行）**：`umbra` 支持单/多 IP、stdin 管道批量、NDJSON 输出、`--db-dir` 指定数据、黑客风 banner；任一失败退码 1。
 - **umbra-server（Web 后端）**：axum + 类 Spring Boot 三层（controller/service/mapper），`/api/health`、`/api/lookup`、`/api/batch`，非法 IP 返回 400，批量逐项独立，CORS 放开。
 - **apps/desktop（桌面客户端）**：Tauri 2 + Vue3 + Vite + Element Plus + TS，三主题（极客/暗色/亮色，设置页切换持久化），经 IPC 调用 Rust 内核；产出 Windows MSI 与 NSIS 安装包。
@@ -23,5 +23,5 @@
 - 数据访问全部在 Rust 内核完成，前端不解析任何 `.xdb`。
 - 根 `Cargo.toml` 的 `repository` 由上游地址修正为本仓库地址；上游致敬保留在文档与 `vendor/UPSTREAM-LICENSE-ip2region.md`。
 - 前端新增 `pnpm-workspace.yaml` 显式声明 `allowBuilds`（esbuild / vue-demi 不运行安装脚本），使 `pnpm install --frozen-lockfile` 在 CI 上以 0 退出（pnpm 11+ 的 `strictDepBuilds` 默认会把未审查的构建脚本判为失败）。
-- `umbra-core` 单元测试由 8 项增至 12 项，新增离线库定位优先级链与缺数据文件报错用例。
+- 新增的 4 项用例覆盖离线库定位优先级链与缺数据文件报错分支。
 - 桌面与网页端 GUI 运行时交互需人工最终确认。
