@@ -152,4 +152,4 @@ UMBRA 的数据与查询能力来自 **ip2region**（作者 lionsoul2014 / chenx
 
 ## 开源协议
 
-UMBRA 采用 **Apache License 2.0 与 MIT License 双许可**（与上游 ip2region 一致），你可以任选其一使用、分发和修改。协议全文见 [LICENSE.md](LICENSE.md)。
+UMBRA 采用 **Apache License 2.0 与 MIT License 双许可**（与上游 ip2region 一致），你可以任选其一使用、分发和修改。协议全文见 [LICENSE](LICENSE)（沿用上游许可文本，MIT 部分版权署上游作者 Lionsoul）。
