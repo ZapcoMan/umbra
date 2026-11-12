@@ -1,6 +1,6 @@
 # UMBRA
 
-![Version](https://img.shields.io/badge/version-v0.1.0-00ff9c?style=flat-square)
+![Version](https://img.shields.io/badge/version-v0.1.1-00ff9c?style=flat-square)
 ![Release](https://img.shields.io/github/v/release/ZapcoMan/umbra?style=flat-square&label=release&color=ff2d95)
 ![License](https://img.shields.io/badge/license-Apache--2.0%20OR%20MIT-blueviolet?style=flat-square)
 
@@ -32,9 +32,8 @@ CI 在 `v*` tag 上构建并发布到 [GitHub Release](https://github.com/ZapcoM
 
 | 产物 | 内容 |
 | --- | --- |
-| `umbra-<tag>-<target>.tar.gz` / `.zip` | `umbra` + `umbra-server` + 内嵌 `data/*.xdb`，解压即用。target 覆盖 Linux x86_64、macOS aarch64/x86_64、Windows x64 |
+| `umbra-<tag>-<target>.tar.gz` / `.zip` | `umbra` + `umbra-server` + 内嵌 `data/*.xdb`，解压即用。target 覆盖 Linux x86_64-gnu、Windows x64-msvc |
 | `UMBRA_<version>_x64-setup.exe` / `.msi` | Windows 桌面客户端安装包 |
-| `UMBRA_<version>_aarch64.dmg` | macOS 桌面客户端 |
 | `umbra_<version>_amd64.deb` | Linux 桌面客户端 |
 
 官网：<https://zapcoman.github.io/umbra/>（由 `site/` 经 GitHub Pages 部署）

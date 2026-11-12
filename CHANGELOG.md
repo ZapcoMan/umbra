@@ -2,6 +2,21 @@
 
 本项目遵循[保留式更新日志](https://keepachangelog.com/zh-CN/1.0.0/)规范，版本号遵循[语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.1.1] - 2026-11-12
+
+发布产物平台收敛：Release 工作流不再构建 macOS 产物。`v0.1.1` 是首个实际产出 GitHub Release 的版本。
+
+### 改动
+
+- **CLI / Server 归档**：覆盖 Linux x86_64-gnu 与 Windows x64-msvc 两个 target，仍连同 `data/` 一起打包，解压即用。
+- **桌面安装包**：覆盖 Windows（NSIS + MSI）与 Linux（deb）。
+- README 与官网的平台表述同步收敛，只列出实际提供的平台。
+
+### 说明
+
+- `v0.1.0` 的 Release 未生成：同一运行中三个 macOS 作业未能分配到 runner（无 step、无日志），导致汇总 Release 的 job 未执行。按"不重指已推送 tag"的约定，以本版本作为发布点。
+- `v0.1.0` 条目所述 macOS 产物未对外提供；该历史条目保留原文以保真。
+
 ## [0.1.0] - 2026-11-11
 
 首个版本：基于上游 ip2region 的离线 IP 地理定位套件。
