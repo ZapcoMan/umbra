@@ -1,7 +1,7 @@
 {
   "name": "umbra-desktop",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "UMBRA 桌面客户端 (Tauri 2 + Vue3 + Vite + Element Plus + TS)",
   "scripts": {

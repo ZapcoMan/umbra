@@ -1,6 +1,6 @@
 [package]
 name = "umbra-desktop"
-version = "0.1.0"
+version = "0.1.1"
 description = "UMBRA 桌面客户端 (Tauri 2)"
 edition = "2021"
 rust-version = "1.89"

@@ -1,7 +1,7 @@
 {
   "name": "umbra-web",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "UMBRA 网页端查询应用 (Vue3 + Vite + Element Plus + TS)，经 HTTP 调用 umbra-server",
   "scripts": {
