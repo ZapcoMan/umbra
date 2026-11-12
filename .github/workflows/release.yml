@@ -16,11 +16,6 @@ jobs:
         include:
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-          - os: macos-14
-            target: aarch64-apple-darwin
-          # GitHub 已退役 Intel macOS runner，故在 Apple Silicon 上交叉出 x86_64 darwin
-          - os: macos-14
-            target: x86_64-apple-darwin
           - os: windows-latest
             target: x86_64-pc-windows-msvc
     runs-on: ${{ matrix.os }}
@@ -79,9 +74,6 @@ jobs:
           - os: windows-latest
             platform: windows
             bundles: nsis,msi
-          - os: macos-14
-            platform: macos
-            bundles: app,dmg
           - os: ubuntu-22.04
             platform: linux
             bundles: deb
@@ -134,7 +126,7 @@ jobs:
         run: |
           mkdir -p upload
           find apps/desktop/src-tauri/target/release/bundle -type f \
-            \( -name '*.exe' -o -name '*.msi' -o -name '*.dmg' -o -name '*.deb' -o -name '*.app.tar.gz' \) \
+            \( -name '*.exe' -o -name '*.msi' -o -name '*.deb' \) \
             -exec cp {} upload/ \;
           ls -l upload
 
