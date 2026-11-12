@@ -1,13 +1,9 @@
-UMBRA is dual-licensed under the Apache License 2.0 and the MIT License.
+ip2region is dual-licensed under the Apache License 2.0 and the MIT License.
 
 You may use, distribute, and modify this software under either license,
 at your option. The full text of both licenses appears below.
 
 SPDX-License-Identifier: Apache-2.0 OR MIT
-
-Note: UMBRA is built on top of the upstream ip2region project, which is
-likewise dual-licensed under Apache-2.0 OR MIT. The upstream license text
-is preserved verbatim at `vendor/UPSTREAM-LICENSE-ip2region.md`.
 
 ==============================================================================
                                  Apache License
@@ -49,13 +45,13 @@ is preserved verbatim at `vendor/UPSTREAM-LICENSE-ip2region.md`.
       copyright notice that is included in or attached to the work
       (an example is provided in the Appendix below).
 
-      "Derivative Works" shall mean any work, whether in Source or
-      Object form, that is based on (or derived from) the Work and for which
-      the editorial revisions, annotations, elaborations, or other
-      modifications represent, as a whole, an original work of authorship.
-      For the purposes of this License, Derivative Works shall not include
-      works that remain separable from, or merely link (or bind by name) to
-      the interfaces of, the Work and Derivative Works thereof.
+      "Derivative Works" shall mean any work, whether in Source or Object
+      form, that is based on (or derived from) the Work and for which the
+      editorial revisions, annotations, elaborations, or other modifications
+      represent, as a whole, an original work of authorship. For the purposes
+      of this License, Derivative Works shall not include works that remain
+      separable from, or merely link (or bind by name) to the interfaces of,
+      the Work and Derivative Works thereof.
 
       "Contribution" shall mean any work of authorship, including
       the original version of the Work and any modifications or additions
@@ -63,12 +59,12 @@ is preserved verbatim at `vendor/UPSTREAM-LICENSE-ip2region.md`.
       submitted to Licensor for inclusion in the Work by the copyright owner
       or by an individual or Legal Entity authorized to submit on behalf of
       the copyright owner. For the purposes of this definition, "submitted"
-      means any form of electronic, verbal, or written communication sent to
-      the Licensor or its representatives, including but not limited to
-      communication on electronic mailing lists, source code control
-      systems, and issue tracking systems that are managed by, or on behalf
-      of, the Licensor for the purpose of discussing and improving the Work,
-      but excluding communication that is conspicuously marked or otherwise
+      means any form of electronic, verbal, or written communication sent
+      to the Licensor or its representatives, including but not limited to
+      communication on electronic mailing lists, source code control systems,
+      and issue tracking systems that are managed by, or on behalf of, the
+      Licensor for the purpose of discussing and improving the Work, but
+      excluding communication that is conspicuously marked or otherwise
       designated in writing by the copyright owner as "Not a Contribution."
 
       "Contributor" shall mean Licensor and any individual or Legal Entity
@@ -198,7 +194,7 @@ is preserved verbatim at `vendor/UPSTREAM-LICENSE-ip2region.md`.
       same "printed page" as the copyright notice for easier
       identification within third-party archives.
 
-   Copyright 2026 UMBRA Authors
+   Copyright [yyyy] [name of copyright owner]
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -213,9 +209,9 @@ is preserved verbatim at `vendor/UPSTREAM-LICENSE-ip2region.md`.
    limitations under the License.
 
 ==========================================================================
-The MIT License (MIT)
+The following license applies to the ip2region library
 --------------------------------------------------------------------------
-Copyright (c) 2026 UMBRA Authors
+Copyright (c) 2015 Lionsoul<chenxin619315@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
