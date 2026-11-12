@@ -43,7 +43,7 @@ jobs:
           cp "target/${{ matrix.target }}/release/umbra" "$stage/"
           cp "target/${{ matrix.target }}/release/umbra-server" "$stage/"
           cp data/ip2region_v4.xdb data/ip2region_v6.xdb "$stage/data/"
-          cp LICENSE.md README.md "$stage/"
+          cp LICENSE README.md "$stage/"
           tar -czf "upload/$stage.tar.gz" "$stage"
           ls -l upload
 
@@ -56,7 +56,7 @@ jobs:
           Copy-Item "target/${{ matrix.target }}/release/umbra.exe" $stage
           Copy-Item "target/${{ matrix.target }}/release/umbra-server.exe" $stage
           Copy-Item data/ip2region_v4.xdb, data/ip2region_v6.xdb "$stage/data"
-          Copy-Item LICENSE.md, README.md $stage
+          Copy-Item LICENSE, README.md $stage
           Compress-Archive -Path $stage -DestinationPath "upload/$stage.zip"
           Get-ChildItem upload
 
